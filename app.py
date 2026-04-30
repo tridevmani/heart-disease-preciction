@@ -14,14 +14,16 @@ from src.predict import predict_user
 # ================== CONFIG ==================
 st.set_page_config(page_title="Cardiovascular Intelligence", layout="wide")
 
-# ================== LOAD ==================
-model = joblib.load("models/model.pkl")
-scaler = joblib.load("models/scaler.pkl")
-feature_names = joblib.load("models/features.pkl")
+# ================== FIXED PATH (IMPORTANT) ==================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, "models/model.pkl"))
+scaler = joblib.load(os.path.join(BASE_DIR, "models/scaler.pkl"))
+feature_names = joblib.load(os.path.join(BASE_DIR, "models/features.pkl"))
 
 # ================== BACKGROUND ==================
 def get_base64(img_path):
-    with open(img_path, "rb") as f:
+    with open(os.path.join(BASE_DIR, img_path), "rb") as f:
         return base64.b64encode(f.read()).decode()
 
 img = get_base64("assets/heart.jpg")
@@ -141,26 +143,21 @@ with right:
 
             content = []
 
-            # Title
             content.append(Paragraph("<b>Cardiovascular Risk Report</b>", styles['Title']))
             content.append(Spacer(1, 10))
 
-            # Date
             date = datetime.datetime.now().strftime("%d-%m-%Y")
             content.append(Paragraph(f"Date: {date}", styles['Normal']))
             content.append(Spacer(1, 10))
 
-            # Patient Info
             content.append(Paragraph("<b>Patient Information</b>", styles['Heading2']))
             content.append(Paragraph(f"Name: {name}", styles['Normal']))
             content.append(Paragraph(f"Phone: {phone}", styles['Normal']))
             content.append(Spacer(1, 10))
 
-            # Result
             content.append(Paragraph("<b>Prediction Result</b>", styles['Heading2']))
             content.append(Paragraph(f"Probability: {prob:.2f}", styles['Normal']))
 
-            # ===== FIXED COLORED DOT =====
             if prob > 0.7:
                 dot_color = "red"
             elif prob > 0.4:
@@ -175,7 +172,6 @@ with right:
 
             content.append(Spacer(1, 10))
 
-            # Recommendation
             content.append(Paragraph("<b>Recommendations</b>", styles['Heading2']))
             content.append(Paragraph(recommendation, styles['Normal']))
 
